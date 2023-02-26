@@ -13,7 +13,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.show()
 
         self.m_canvas = CCanvas(self.GVCanvas)
-        self.m_canvas.createLine(100)
+        self.PBTry.pressed.connect(self.reload)
+    
+    def reload(self):
+        self.m_canvas.generatePrint(20, 50, 2, 1)
 
 
 app = QApplication(sys.argv)
