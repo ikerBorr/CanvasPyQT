@@ -42,7 +42,7 @@ class CCanvas:
 
     def resize(self, width: int, height: int) -> None:
         
-        self.m_scene = QGraphicScene(0, 0, width, height)
+        self.m_scene = QGraphicsScene(0, 0, width, height)
 
 
     def generatePrint(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 1) -> None:
@@ -66,8 +66,8 @@ class CCanvas:
         print("H: " + str(nLinesH))
         print("V: " + str(nLinesV))
 
-        totalWidth = (nLinesH + 1) * tempWidth + nLinesH * gap + offset
-        totalHeight = (nLinesV + 1) * tempHeight + nLinesV * gap + offset
+        totalWidth = (nLinesH + 1) * tempWidth + nLinesH * gap + 2 * offset
+        totalHeight = (nLinesV + 1) * tempHeight + nLinesV * gap + 2 * offset
 
         print("tW: " + str(totalWidth))
         print("tH: " + str(totalHeight))
@@ -79,15 +79,15 @@ class CCanvas:
         geometry.setPen(pen)
         self.m_scene.addItem(geometry)
 
-        orgX = (self.m_width - totalWidth) / 2
-        orgY = (self.m_height - totalHeight) / 2
+        orgX = (self.m_width - totalWidth) / 2 + CANVAS_OFFSET / 2
+        orgY = (self.m_height - totalHeight) / 2 + CANVAS_OFFSET / 2
 
         off = 0
         border = QPen(Qt.GlobalColor.white)
         border.setWidth(gap)
 
-        for i in range(nLinesH):
-            off = (i+1) * tempWidth
+        for i in range(nLinesH + 2):
+            off = (i) * (tempWidth + gap)
             tempLine = QGraphicsLineItem(orgX + off, orgY, orgX + off, totalHeight + orgY)
             print("orgX: " + str(orgX) + "; off: " + str(off) + "; orgY: " + str(orgY) + "; totalHeight: " + str(totalHeight))
             print("X1: " + str(orgX + off) + "; Y1: " + str(orgY) + "; X2: " + str(orgX + off) + "; Y2: " + str(totalHeight + orgY)) 

@@ -25,6 +25,9 @@
           <height>300</height>
          </size>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background: white;</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -107,7 +110,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox_6"/>
+         <widget class="QSpinBox" name="SPOffset"/>
         </item>
        </layout>
       </item>
