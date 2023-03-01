@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsLineItem
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QBrush, QPen
 
 from PyQt6 import QtCore
@@ -9,11 +9,7 @@ from PyQt6 import QtCore
 
 MAX_WIDTH = 425
 MAX_HEIGHT = 300
-
 CANVAS_OFFSET = 10
-
-GEOMETRY_BACKGROUND_COLOR = QBrush(Qt.GlobalColor.gray)
-GEOMETRY_BORDER_COLOR = QPen(Qt.GlobalColor.black)
 GEOMETRY_BORDER_SIZE = 2
 
 #--------------#
@@ -23,76 +19,68 @@ class CCanvas:
     def __init__(self, canvas: QGraphicsView, width: int = MAX_WIDTH, height: int = MAX_HEIGHT) -> None:
 
         super().__init__()
-        self.m_width = width
-        self.m_height = height
-        self.m_canvas = canvas
-        self.m_scene = QGraphicsScene(0, 0, width + CANVAS_OFFSET, height + CANVAS_OFFSET)
-
+        self.__width = width
+        self.__height = height
+        self.__canvas = canvas
+        self.__scene = QGraphicsScene(0, 0, width + CANVAS_OFFSET, height + CANVAS_OFFSET)
+        self.__brushGeometry = QBrush(Qt.GlobalColor.gray)
+        self.__penGeometry = QPen(Qt.GlobalColor.black)
+        self.__penGeometry.setWidth(GEOMETRY_BORDER_SIZE)
+        self.__penLine = QPen(Qt.GlobalColor.white)
+        self.__penLine.setWidth(1)
         margin = CANVAS_OFFSET + GEOMETRY_BORDER_SIZE
-        self.m_canvas.setMaximumSize(QtCore.QSize(MAX_WIDTH + margin , MAX_HEIGHT + margin))
+        self.__canvas.setMaximumSize(QtCore.QSize(MAX_WIDTH + margin , MAX_HEIGHT + margin))
+
+
+    def __printLine(self, x1, y1, x2, y2, pen: QPen = None):
+        tempLine = QGraphicsLineItem(CANVAS_OFFSET / 2 + x1, y1, CANVAS_OFFSET / 2 + x2, y2)
+        tempLine.setPen(pen or self.__penLine)
+        self.__scene.addItem(tempLine)
+
+
+    def __printRect(self, x1, y1, x2, y2, pen: QPen = None, brush: QBrush = None):
+        geometry = QGraphicsRectItem(CANVAS_OFFSET / 2 + x1, CANVAS_OFFSET / 2 + y1, x2, y2)
+        geometry.setPen(pen or self.__penGeometry)
+        geometry.setBrush(brush or self.__brushGeometry)
+        self.__scene.addItem(geometry)
+
         
-        # geometry = QGraphicsRectItem(CANVAS_OFFSET/2, CANVAS_OFFSET/2, width, height)
-        # geometry.setBrush(GEOMETRY_BACKGROUND_COLOR)
-        # pen = GEOMETRY_BORDER_COLOR
-        # pen.setWidth(GEOMETRY_BORDER_SIZE)
-        # geometry.setPen(pen)
-        # self.m_scene.addItem(geometry)
-        # self.m_canvas.setScene(self.m_scene)
-
-
     def resize(self, width: int, height: int) -> None:
         
-        self.m_scene = QGraphicsScene(0, 0, width, height)
+        self.__scene = QGraphicsScene(0, 0, width, height)
 
 
-    def generatePrint(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 1) -> None:
+    def generatePrint(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 0) -> None:
         
-        nLinesH1 = (self.m_width + gap - offset) / (width + gap)
-        nLinesV1 = (self.m_height + gap - offset) / (height + gap)
-        nLinesH2 = (self.m_width + gap - offset) / (height + gap)
-        nLinesV2 = (self.m_height + gap - offset) / (width + gap)
+        nLinesH1 = int((self.__width - width - 2 * offset) / (width + gap))
+        nLinesV1 = int((self.__height - height - 2 * offset) / (height + gap))
+        nLinesH2 = int((self.__width - width - 2 * offset) / (height + gap))
+        nLinesV2 = int((self.__height - height - 2 * offset) / (width+ gap))
 
         if ((nLinesH1 * nLinesV1) < (nLinesH2 * nLinesV2)):
             tempWidth = height
             tempHeight = width
-            nLinesH = int(nLinesH2 - 1)
-            nLinesV = int(nLinesV2 - 1)
+            nLinesH = nLinesH2
+            nLinesV = nLinesV2
         else:
             tempWidth = width
             tempHeight = height
-            nLinesH = int(nLinesH1 - 1) 
-            nLinesV = int(nLinesV1 - 1)
+            nLinesH = nLinesH1
+            nLinesV = nLinesV1
         
-        print("H: " + str(nLinesH))
-        print("V: " + str(nLinesV))
-
         totalWidth = (nLinesH + 1) * tempWidth + nLinesH * gap + 2 * offset
         totalHeight = (nLinesV + 1) * tempHeight + nLinesV * gap + 2 * offset
-
-        print("tW: " + str(totalWidth))
-        print("tH: " + str(totalHeight))
         
-        geometry = QGraphicsRectItem(CANVAS_OFFSET/2, CANVAS_OFFSET/2, self.m_width, self.m_height)
-        geometry.setBrush(GEOMETRY_BACKGROUND_COLOR)
-        pen = GEOMETRY_BORDER_COLOR
-        pen.setWidth(GEOMETRY_BORDER_SIZE)
-        geometry.setPen(pen)
-        self.m_scene.addItem(geometry)
+        self.__printRect(0, 0, self.__width, self.__height)
 
-        orgX = (self.m_width - totalWidth) / 2 + CANVAS_OFFSET / 2
-        orgY = (self.m_height - totalHeight) / 2 + CANVAS_OFFSET / 2
+        orgX = (self.__width - totalWidth) / 2 + offset
+        orgY = (self.__height - totalHeight) / 2 + offset
 
         off = 0
-        border = QPen(Qt.GlobalColor.white)
-        border.setWidth(gap)
+        self.__penLine.setWidth(gap)
 
         for i in range(nLinesH + 2):
             off = (i) * (tempWidth + gap)
-            tempLine = QGraphicsLineItem(orgX + off, orgY, orgX + off, totalHeight + orgY)
-            print("orgX: " + str(orgX) + "; off: " + str(off) + "; orgY: " + str(orgY) + "; totalHeight: " + str(totalHeight))
-            print("X1: " + str(orgX + off) + "; Y1: " + str(orgY) + "; X2: " + str(orgX + off) + "; Y2: " + str(totalHeight + orgY)) 
-            tempLine.setPen(border)
-            self.m_scene.addItem(tempLine)
-            print(i)
+            self.__printLine(orgX + off, orgY, orgX + off, totalHeight + orgY - 2 * offset)
 
-        self.m_canvas.setScene(self.m_scene) 
+        self.__canvas.setScene(self.__scene) 
