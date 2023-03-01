@@ -21,8 +21,8 @@
        <widget class="QGraphicsView" name="GVCanvas">
         <property name="maximumSize">
          <size>
-          <width>425</width>
-          <height>300</height>
+          <width>439</width>
+          <height>314</height>
          </size>
         </property>
         <property name="styleSheet">

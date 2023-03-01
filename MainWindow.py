@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.GVCanvas = QtWidgets.QGraphicsView(parent=self.centralwidget)
-        self.GVCanvas.setMaximumSize(QtCore.QSize(425, 300))
+        self.GVCanvas.setMaximumSize(QtCore.QSize(449, 324))
         self.GVCanvas.setStyleSheet("background: white;")
         self.GVCanvas.setObjectName("GVCanvas")
         self.horizontalLayout_4.addWidget(self.GVCanvas)
