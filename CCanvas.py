@@ -81,7 +81,7 @@ class CCanvas:
 
         self.__printLine(offset_v, offset_h, offset_v, endy, 2)
         for i in range(n_vert - 1):
-            self.__printLine(int(orgx), int(offset_h + gap / 2), int(orgx), int(endy - gap / 2), gap)
+            self.__printLine(orgx, int(offset_h + gap / 2), orgx, int(endy - gap / 2), gap)
             orgx = orgx + width + gap
         self.__printLine(endx, offset_h, endx, endy, 2)
 
