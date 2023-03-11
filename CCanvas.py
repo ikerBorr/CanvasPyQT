@@ -88,7 +88,6 @@ class CCanvas:
         self.__printLine(offset_v, offset_h, endx, offset_h, 2)
         for i in range(n_hort - 1):
             self.__printLine(int(offset_v + gap / 2), orgy, int(endx - gap / 2), orgy, gap)
-            print("orgVert: ", orgy)
             orgy = orgy + height + gap
         self.__printLine(offset_v, endy, endx, endy, 2)
 
