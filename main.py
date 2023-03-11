@@ -16,7 +16,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.PBTry.pressed.connect(self.reload)
     
     def reload(self):
-        print("value:" , self.SPCopyX.value())
+        print("value:", self.SPCopyX.value())
         self.m_canvas.generatePrint(self.SPCopyX.value(), self.SPCopyY.value(), self.SPOffset.value(), self.SPGap.value())
 
 
