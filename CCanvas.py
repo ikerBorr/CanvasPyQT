@@ -68,15 +68,11 @@ class CCanvas:
 
         self.__width = int(width)
         self.__height = int(height)
+
         scene_max_w = width+ 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
         scene_max_h = height + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
         self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
-
-        scene_max_w = width + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
-        scene_max_h = height + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
-        self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
         self.__canvas.setScene(self.__scene)
-        # self.__canvas.setMaximumSize(QtCore.QSize(scene_max_w + 2, scene_max_h + 2))
 
     def generate_print(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 1) -> None:
         
