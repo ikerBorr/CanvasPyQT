@@ -14,6 +14,7 @@ class CCanvas:
         super().__init__()
         self.__width = width
         self.__height = height
+        self.__constSize = 10.11
         self.__canvas = canvas
         self.__brushGeometry = QBrush(Qt.GlobalColor.gray)
         self.__penGeometry = QPen(Qt.GlobalColor.black)
@@ -25,6 +26,7 @@ class CCanvas:
         scene_max_h = const.MAX_HEIGHT + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
         self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
         self.__canvas.setMaximumSize(QtCore.QSize(scene_max_w + 2, scene_max_h + 2))
+        self.__canvas.setMinimumSize(QtCore.QSize(scene_max_w + 2, scene_max_h + 2))
 
     def __print_line(self, x1: int, y1: int, x2: int, y2: int, gap: int = 1) -> None:
         
@@ -54,17 +56,26 @@ class CCanvas:
         else:
             return h, w, nh2, nw2
 
-    def resize(self, width, height) -> None:
+    def cm_to_px(self, x: float) -> int:
+        ret = int(x * self.__constSize)
+        if ret == 0:
+            return 1
+        else:
+            return int(x * self.__constSize)
+
+    def resize(self, width: float, height: float) -> None:
 
         if height > width:
             width, height = height, width
 
-        a1 = const.MAX_WIDTH / width
-        a2 = const.MAX_HEIGHT / height
-        if a1 > a2:
-            width, height = width * a2, height * a2
+        c1 = const.MAX_WIDTH / width
+        c2 = const.MAX_HEIGHT / height
+        if c1 > c2:
+            width, height = width * c2, height * c2
+            self.__constSize = c2
         else:
-            width, height = width * a1, height * a1
+            width, height = width * c1, height * c1
+            self.__constSize = c1
 
         self.__width = int(width)
         self.__height = int(height)
@@ -74,13 +85,14 @@ class CCanvas:
         self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
         self.__canvas.setScene(self.__scene)
 
-    def generate_print(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 1) -> None:
+    def generate_print(self, width: float = 1, height: float = 1, offset: float = 1, gap: float = 1) -> int:
         
         assert(width >= 0 and height >= 0 and offset > 0 and gap > 0)
 
         self.__print_rect(0, 0, self.__width, self.__height, QBrush(Qt.GlobalColor.white))
 
-        width, height, n_vert, n_hort = self.__optimise_place(width, height, gap, offset)
+        gap, offset = self.cm_to_px(gap), self.cm_to_px(offset)
+        width, height, n_vert, n_hort = self.__optimise_place(self.cm_to_px(width), self.cm_to_px(height), gap, offset)
 
         offset_v = int((self.__width - int(width * n_vert + gap * (n_vert - 1))) / 2)
         offset_h = int((self.__height - int(height * n_hort + gap * (n_hort - 1))) / 2)
@@ -105,3 +117,5 @@ class CCanvas:
         self.__print_line(offset_v, end_y, end_x, end_y, 2)
 
         self.__canvas.setScene(self.__scene)
+
+        return n_vert * n_hort
