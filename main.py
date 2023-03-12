@@ -45,6 +45,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.LBCopies.setText("err")
             self.LBCopies.setStyleSheet("color: red")
             self.LBSheet.setStyleSheet("color: red")
+
     def resize_canvas(self) -> None:
         self.__canvas.resize(self.SPCanvasX.value(), self.SPCanvasY.value())
         self.reload()
