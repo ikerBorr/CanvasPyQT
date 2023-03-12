@@ -34,7 +34,7 @@ class CCanvas:
         line = QLineF(x1 + const.LINE_ORG, y1 + const.LINE_ORG, x2 + const.LINE_ORG, y2 + const.LINE_ORG)
         self.__scene.addLine(line, self.__penLine)
 
-    def __print_rect(self, x1: int, y1: int, x2: int, y2: int, pen: QPen = None, brush: QBrush = None) -> None:
+    def __print_rect(self, x1: int, y1: int, x2: int, y2: int, brush: QBrush = None, pen: QPen = None,) -> None:
         
         assert(x1 >= 0 and x2 <= self.__width and y1 >= 0 and y2 <= self.__height)
 
@@ -62,7 +62,7 @@ class CCanvas:
         
         assert(width >= 0 and height >= 0 and offset > 0 and gap > 0)
 
-        self.__print_rect(0, 0, 425, 300)
+        self.__print_rect(0, 0, 425, 300, QBrush(Qt.GlobalColor.white))
 
         width, height, n_vert, n_hort = self.__optime_place(width, height, gap, offset)
 
@@ -73,6 +73,8 @@ class CCanvas:
         end_x = self.__width - offset_v
         orgy = int(offset_h + height + gap / 2)
         end_y = self.__height - offset_h
+
+        self.__print_rect(offset_v, offset_h, end_x - offset_v, end_y - offset_h)
 
         self.__print_line(offset_v, offset_h, offset_v, end_y, 2)
         for i in range(n_vert - 1):
