@@ -54,15 +54,35 @@ class CCanvas:
         else:
             return h, w, nh2, nw2
 
-    def resize(self, width: int, height: int) -> None:
+    def resize(self, width, height) -> None:
 
-        self.__scene = QGraphicsScene(0, 0, width, height)
+        if height > width:
+            width, height = height, width
+
+        a1 = const.MAX_WIDTH / width
+        a2 = const.MAX_HEIGHT / height
+        if a1 > a2:
+            width, height = width * a2, height * a2
+        else:
+            width, height = width * a1, height * a1
+
+        self.__width = int(width)
+        self.__height = int(height)
+        scene_max_w = width+ 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        scene_max_h = height + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
+
+        scene_max_w = width + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        scene_max_h = height + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
+        self.__canvas.setScene(self.__scene)
+        # self.__canvas.setMaximumSize(QtCore.QSize(scene_max_w + 2, scene_max_h + 2))
 
     def generate_print(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 1) -> None:
         
         assert(width >= 0 and height >= 0 and offset > 0 and gap > 0)
 
-        self.__print_rect(0, 0, 425, 300, QBrush(Qt.GlobalColor.white))
+        self.__print_rect(0, 0, self.__width, self.__height, QBrush(Qt.GlobalColor.white))
 
         width, height, n_vert, n_hort = self.__optime_place(width, height, gap, offset)
 
