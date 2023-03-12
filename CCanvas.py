@@ -41,7 +41,7 @@ class CCanvas:
         rect = QRectF(x1 + const.RECT_ORG, y1 + const.RECT_ORG, x2, y2)
         self.__scene.addRect(rect, pen or self.__penGeometry, brush or self.__brushGeometry)
 
-    def __optime_place(self, w, h, gap, offset):
+    def __optime_place(self, w: int, h: int, gap: int = 1, offset: int = 1) -> [int, int, int, int]:
 
         aux = gap - 2 * offset
         nw1 = int((self.__width + aux) / (w + gap))
@@ -58,9 +58,9 @@ class CCanvas:
 
         self.__scene = QGraphicsScene(0, 0, width, height)
 
-    def generate_print(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 0) -> None:
+    def generate_print(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 1) -> None:
         
-        assert(width >= 0 and height >= 0 and offset >= 0 and gap >= 0)
+        assert(width >= 0 and height >= 0 and offset > 0 and gap > 0)
 
         self.__print_rect(0, 0, 425, 300)
 
