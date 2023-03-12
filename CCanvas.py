@@ -1,12 +1,14 @@
-from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsLineItem
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene
+from PyQt6.QtCore import Qt, QRectF, QLineF
 from PyQt6.QtGui import QBrush, QPen
 
 from PyQt6 import QtCore
 
 import constants as const
 
+
 class CCanvas:
+
     def __init__(self, canvas: QGraphicsView, width: int = const.MAX_WIDTH, height: int = const.MAX_HEIGHT) -> None:
 
         super().__init__()
@@ -16,35 +18,30 @@ class CCanvas:
         self.__brushGeometry = QBrush(Qt.GlobalColor.gray)
         self.__penGeometry = QPen(Qt.GlobalColor.black)
         self.__penGeometry.setWidth(const.GEOMETRY_BORDER)
-        self.__penLine = QPen(Qt.GlobalColor.white)
+        self.__penLine = QPen(Qt.GlobalColor.red)
         self.__penLine.setWidth(1)
 
-        sceneMaxW = const.MAX_WIDTH + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
-        sceneMaxH = const.MAX_HEIGHT + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
-        self.__scene = QGraphicsScene(0, 0, sceneMaxW, sceneMaxH)
-        self.__canvas.setMaximumSize(QtCore.QSize(sceneMaxW + 2, sceneMaxH + 2))
+        scene_max_w = const.MAX_WIDTH + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        scene_max_h = const.MAX_HEIGHT + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
+        self.__canvas.setMaximumSize(QtCore.QSize(scene_max_w + 2, scene_max_h + 2))
 
-    def __printLine(self, x1: int, y1: int, x2: int, y2: int, gap: int = 1) -> None:
+    def __print_line(self, x1: int, y1: int, x2: int, y2: int, gap: int = 1) -> None:
         
         assert(x1 >= 0 and x2 <= self.__width and y1 >= 0 and y2 <= self.__height)
 
-        tempLine = QGraphicsLineItem(x1 + const.LINE_ORG, y1 + const.LINE_ORG, x2 + const.LINE_ORG, y2 + const.LINE_ORG)
         self.__penLine.setWidth(gap)
-        tempLine.setPen(self.__penLine)
-        self.__scene.addItem(tempLine)
+        line = QLineF(x1 + const.LINE_ORG, y1 + const.LINE_ORG, x2 + const.LINE_ORG, y2 + const.LINE_ORG)
+        self.__scene.addLine(line, self.__penLine)
 
-
-    def __printRect(self, x1: int, y1: int, x2: int, y2: int, pen: QPen = None, brush: QBrush = None) -> None:
+    def __print_rect(self, x1: int, y1: int, x2: int, y2: int, pen: QPen = None, brush: QBrush = None) -> None:
         
         assert(x1 >= 0 and x2 <= self.__width and y1 >= 0 and y2 <= self.__height)
 
-        geometry = QGraphicsRectItem(const.RECT_ORG, const.RECT_ORG, x2 + 2 * const.GEOMETRY_BORDER, y2 + 2 * const.GEOMETRY_BORDER)
-        geometry.setPen(pen or self.__penGeometry)
-        geometry.setBrush(brush or self.__brushGeometry)
-        self.__scene.addItem(geometry)
+        rect = QRectF(x1 + const.RECT_ORG, y1 + const.RECT_ORG, x2, y2)
+        self.__scene.addRect(rect, pen or self.__penGeometry, brush or self.__brushGeometry)
 
-
-    def __optimePlace(self, w, h, gap, offset):
+    def __optime_place(self, w, h, gap, offset):
 
         aux = gap - 2 * offset
         nw1 = int((self.__width + aux) / (w + gap))
@@ -57,38 +54,36 @@ class CCanvas:
         else:
             return h, w, nw2, nh2
 
-
     def resize(self, width: int, height: int) -> None:
 
         self.__scene = QGraphicsScene(0, 0, width, height)
 
-
-    def generatePrint(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 0) -> None:
+    def generate_print(self, width: int = 1, height: int = 1, offset: int = 1, gap: int = 0) -> None:
         
         assert(width >= 0 and height >= 0 and offset >= 0 and gap >= 0)
 
-        self.__printRect(0, 0, 425, 300)
+        self.__print_rect(0, 0, 425, 300)
 
-        width, height, n_hort, n_vert = self.__optimePlace(width, height, gap, offset)
+        width, height, n_hort, n_vert = self.__optime_place(width, height, gap, offset)
 
         offset_v = int((self.__width - int(width * n_vert + gap * (n_vert - 1))) / 2)
         offset_h = int((self.__height - int(height * n_hort + gap * (n_hort - 1))) / 2)
 
-        orgx = int(offset_v + width + gap / 2)
-        endx = self.__width - offset_v
+        org_x = int(offset_v + width + gap / 2)
+        end_x = self.__width - offset_v
         orgy = int(offset_h + height + gap / 2)
-        endy = self.__height - offset_h
+        end_y = self.__height - offset_h
 
-        self.__printLine(offset_v, offset_h, offset_v, endy, 2)
+        self.__print_line(offset_v, offset_h, offset_v, end_y, 2)
         for i in range(n_vert - 1):
-            self.__printLine(orgx, int(offset_h + gap / 2), orgx, int(endy - gap / 2), gap)
-            orgx = orgx + width + gap
-        self.__printLine(endx, offset_h, endx, endy, 2)
+            self.__print_line(org_x, int(offset_h + gap / 2), org_x, int(end_y - gap / 2), gap)
+            org_x = org_x + width + gap
+        self.__print_line(end_x, offset_h, end_x, end_y, 2)
 
-        self.__printLine(offset_v, offset_h, endx, offset_h, 2)
+        self.__print_line(offset_v, offset_h, end_x, offset_h, 2)
         for i in range(n_hort - 1):
-            self.__printLine(int(offset_v + gap / 2), orgy, int(endx - gap / 2), orgy, gap)
+            self.__print_line(int(offset_v + gap / 2), orgy, int(end_x - gap / 2), orgy, gap)
             orgy = orgy + height + gap
-        self.__printLine(offset_v, endy, endx, endy, 2)
+        self.__print_line(offset_v, end_y, end_x, end_y, 2)
 
         self.__canvas.setScene(self.__scene)
