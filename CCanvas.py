@@ -18,7 +18,7 @@ class CCanvas:
         self.__brushGeometry = QBrush(Qt.GlobalColor.gray)
         self.__penGeometry = QPen(Qt.GlobalColor.black)
         self.__penGeometry.setWidth(const.GEOMETRY_BORDER)
-        self.__penLine = QPen(Qt.GlobalColor.red)
+        self.__penLine = QPen(Qt.GlobalColor.white)
         self.__penLine.setWidth(1)
 
         scene_max_w = const.MAX_WIDTH + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
@@ -52,7 +52,7 @@ class CCanvas:
         if nw1 * nh1 > nw2 * nh2:
             return w, h, nw1, nh1
         else:
-            return h, w, nw2, nh2
+            return h, w, nh2, nw2
 
     def resize(self, width: int, height: int) -> None:
 
@@ -64,7 +64,7 @@ class CCanvas:
 
         self.__print_rect(0, 0, 425, 300)
 
-        width, height, n_hort, n_vert = self.__optime_place(width, height, gap, offset)
+        width, height, n_vert, n_hort = self.__optime_place(width, height, gap, offset)
 
         offset_v = int((self.__width - int(width * n_vert + gap * (n_vert - 1))) / 2)
         offset_h = int((self.__height - int(height * n_hort + gap * (n_hort - 1))) / 2)
