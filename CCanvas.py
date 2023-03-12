@@ -41,7 +41,7 @@ class CCanvas:
         rect = QRectF(x1 + const.RECT_ORG, y1 + const.RECT_ORG, x2, y2)
         self.__scene.addRect(rect, pen or self.__penGeometry, brush or self.__brushGeometry)
 
-    def __optime_place(self, w: int, h: int, gap: int = 1, offset: int = 1) -> [int, int, int, int]:
+    def __optimise_place(self, w: int, h: int, gap: int = 1, offset: int = 1) -> [int, int, int, int]:
 
         aux = gap - 2 * offset
         nw1 = int((self.__width + aux) / (w + gap))
@@ -49,7 +49,7 @@ class CCanvas:
         nw2 = int((self.__height + aux) / (w + gap))
         nh2 = int((self.__width + aux) / (h + gap))
 
-        if nw1 * nh1 > nw2 * nh2:
+        if (nw1 * nh1) > (nw2 * nh2):
             return w, h, nw1, nh1
         else:
             return h, w, nh2, nw2
@@ -69,7 +69,7 @@ class CCanvas:
         self.__width = int(width)
         self.__height = int(height)
 
-        scene_max_w = width+ 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        scene_max_w = width + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
         scene_max_h = height + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
         self.__scene = QGraphicsScene(0, 0, scene_max_w, scene_max_h)
         self.__canvas.setScene(self.__scene)
@@ -80,7 +80,7 @@ class CCanvas:
 
         self.__print_rect(0, 0, self.__width, self.__height, QBrush(Qt.GlobalColor.white))
 
-        width, height, n_vert, n_hort = self.__optime_place(width, height, gap, offset)
+        width, height, n_vert, n_hort = self.__optimise_place(width, height, gap, offset)
 
         offset_v = int((self.__width - int(width * n_vert + gap * (n_vert - 1))) / 2)
         offset_h = int((self.__height - int(height * n_hort + gap * (n_hort - 1))) / 2)
