@@ -109,9 +109,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.LBImpressionsT)
         self.horizontalLayout_3.addLayout(self.horizontalLayout_2)
         self.verticalLayout_6.addLayout(self.horizontalLayout_3)
-        self.PBTry = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.PBTry.setObjectName("PBTry")
-        self.verticalLayout_6.addWidget(self.PBTry)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -129,4 +126,3 @@ class Ui_MainWindow(object):
         self.label_7.setText(_translate("MainWindow", "Gap"))
         self.label_8.setText(_translate("MainWindow", "Impressions:"))
         self.LBImpressionsT.setText(_translate("MainWindow", "0"))
-        self.PBTry.setText(_translate("MainWindow", "Try"))

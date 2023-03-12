@@ -13,9 +13,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.show()
 
         self.__canvas = CCanvas(self.GVCanvas)
-        self.PBTry.pressed.connect(self.reload)
         self.SPCanvasX.valueChanged.connect(self.resize_canvas)
         self.SPCanvasY.valueChanged.connect(self.resize_canvas)
+        self.SPCopyX.valueChanged.connect(self.reload)
+        self.SPCopyY.valueChanged.connect(self.reload)
+        self.SPGap.valueChanged.connect(self.reload)
+        self.SPOffset.valueChanged.connect(self.reload)
     
     def reload(self) -> None:
         self.__canvas.generate_print(self.SPCopyX.value(), self.SPCopyY.value(),
@@ -23,6 +26,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def resize_canvas(self) -> None:
         self.__canvas.resize(self.SPCanvasX.value(), self.SPCanvasY.value())
+        self.reload()
 
 
 app = QApplication(sys.argv)
