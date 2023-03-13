@@ -81,10 +81,10 @@
             <double>1.000000000000000</double>
            </property>
            <property name="maximum">
-            <double>1000.000000000000000</double>
+            <double>10000.000000000000000</double>
            </property>
            <property name="value">
-            <double>42.000000000000000</double>
+            <double>420.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -104,10 +104,10 @@
             <double>1.000000000000000</double>
            </property>
            <property name="maximum">
-            <double>1000.000000000000000</double>
+            <double>10000.000000000000000</double>
            </property>
            <property name="value">
-            <double>29.699999999999999</double>
+            <double>297.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -136,7 +136,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <double>1000.000000000000000</double>
+            <double>10000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -153,7 +153,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <double>1000.000000000000000</double>
+            <double>10000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -164,38 +164,6 @@
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QFrame" name="frame_3">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>N. Copias:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="SPNCopies">
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>1000</number>
-           </property>
-           <property name="value">
-            <number>1</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
@@ -221,6 +189,9 @@
              </property>
              <property name="minimum">
               <double>0.100000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>10000.000000000000000</double>
              </property>
              <property name="singleStep">
               <double>1.000000000000000</double>
@@ -259,8 +230,43 @@
            <property name="minimum">
             <double>0.100000000000000</double>
            </property>
+           <property name="maximum">
+            <double>10000.000000000000000</double>
+           </property>
            <property name="stepType">
             <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_3">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>N. Copias:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="SPNCopies">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="value">
+            <number>1</number>
            </property>
           </widget>
          </item>
@@ -305,6 +311,24 @@
            </item>
            <item>
             <widget class="QLabel" name="LBCopies">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Útil:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="LBUtil">
              <property name="text">
               <string>0</string>
              </property>
