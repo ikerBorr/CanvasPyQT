@@ -2,8 +2,8 @@ import sys
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
-from MainWindow import Ui_MainWindow
-from CCanvas import CCanvas
+from view.v_MainWindow import Ui_MainWindow
+from controller.c_canvas import CCanvas
 
 import math
 
