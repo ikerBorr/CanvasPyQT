@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(547, 568)
+        MainWindow.resize(547, 551)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -20,8 +20,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.GVCanvas = QtWidgets.QGraphicsView(parent=self.centralwidget)
-        self.GVCanvas.setMinimumSize(QtCore.QSize(439, 314))
-        self.GVCanvas.setMaximumSize(QtCore.QSize(439, 314))
+        self.GVCanvas.setMinimumSize(QtCore.QSize(420, 297))
+        self.GVCanvas.setMaximumSize(QtCore.QSize(420, 297))
         self.GVCanvas.setStyleSheet("background: white;")
         self.GVCanvas.setObjectName("GVCanvas")
         self.horizontalLayout_4.addWidget(self.GVCanvas)

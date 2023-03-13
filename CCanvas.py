@@ -14,7 +14,7 @@ class CCanvas:
         super().__init__()
         self.__width = width
         self.__height = height
-        self.__constSize = 10.11
+        self.__constSize = const.MM_PX_CONSTANT
         self.__canvas = canvas
         self.__brushGeometry = QBrush(Qt.GlobalColor.gray)
         self.__penGeometry = QPen(Qt.GlobalColor.black)
@@ -28,11 +28,11 @@ class CCanvas:
         self.__canvas.setMaximumSize(QtCore.QSize(scene_max_w + 2, scene_max_h + 2))
         self.__canvas.setMinimumSize(QtCore.QSize(scene_max_w + 2, scene_max_h + 2))
 
-    def __print_line(self, x1: int, y1: int, x2: int, y2: int, gap: int = 1) -> None:
+    def __print_line(self, x1: int, y1: int, x2: int, y2: int, gap: float = 1) -> None:
         
         assert(x1 >= 0 and x2 <= self.__width and y1 >= 0 and y2 <= self.__height)
 
-        self.__penLine.setWidth(gap)
+        self.__penLine.setWidth(int(gap))
         line = QLineF(x1 + const.LINE_ORG, y1 + const.LINE_ORG, x2 + const.LINE_ORG, y2 + const.LINE_ORG)
         self.__scene.addLine(line, self.__penLine)
 
@@ -43,7 +43,7 @@ class CCanvas:
         rect = QRectF(x1 + const.RECT_ORG, y1 + const.RECT_ORG, x2, y2)
         self.__scene.addRect(rect, pen or self.__penGeometry, brush or self.__brushGeometry)
 
-    def __optimise_place(self, w: int, h: int, gap: int = 1, offset: int = 1) -> [int, int, int, int]:
+    def __optimise_place(self, w: float, h: float, gap: int = 1, offset: int = 1) -> [int, int, int, int]:
 
         aux = gap - 2 * offset
         nw1 = int((self.__width + aux) / (w + gap))
@@ -56,12 +56,12 @@ class CCanvas:
         else:
             return h, w, nh2, nw2
 
-    def cm_to_px(self, x: float) -> int:
+    def cm_to_px(self, x: float) -> float:
         ret = int(x * self.__constSize)
         if ret == 0:
             return 1
         else:
-            return int(x * self.__constSize)
+            return x * self.__constSize
 
     def resize(self, width: float, height: float) -> None:
 
