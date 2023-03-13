@@ -1,9 +1,12 @@
 import sys
 
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene
+from PyQt6.QtCore import QSize
+from PyQt6.QtGui import QFont
 
 from view.v_MainWindow import Ui_MainWindow
 from controller.c_canvas import CCanvas
+from model import m_constants as const
 
 import math
 
@@ -14,10 +17,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.show()
 
-        self.__canvas = CCanvas(self.GVCanvas)
+        self.__canvas = CCanvas()
         self.__copies = 0
+        self.__cv_width = 420
+        self.__cv_height = 297
+
+        scene_max_w = const.MAX_WIDTH + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        scene_max_h = const.MAX_HEIGHT + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
+        self.GVCanvas.setMaximumSize(QSize(scene_max_w + 2, scene_max_h + 2))
+        self.GVCanvas.setMinimumSize(QSize(scene_max_w + 2, scene_max_h + 2))
+
         self.SPOffset.setValue(0.5)
         self.SPGap.setValue(0.5)
+        self.GVCanvas.setScene(CCanvas.create_scene())
 
         self.__events()
 
@@ -31,9 +43,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.SPNCopies.valueChanged.connect(self.__calculate_copies)
 
     def __reload(self) -> None:
-        self.__copies = self.__canvas.generate_print(self.SPCopyX.value(), self.SPCopyY.value(),
-                                                     self.SPOffset.value(), self.SPGap.value())
+        cp_width, cp_height = self.SPCopyX.value(), self.SPCopyY.value()
+        offset, gap = self.SPOffset.value(), self.SPGap.value()
+
+        scene = self.GVCanvas.scene()
+        scene.clear()
+        scene, self.__copies = self.__canvas.generate_print(scene, cp_width, cp_height, self.__cv_width, 
+                                                            self.__cv_height, offset, gap)
         self.__calculate_copies()
+        if self.__copies > 0:
+            self.GVCanvas.setScene(scene)
+        else:
+            scene.clear()
+            scene.addSimpleText("ERROR TAMAÑO INCORRECTO", QFont("Times", 22))
+            self.GVCanvas.setScene(scene)
 
     def __calculate_copies(self):
         if self.__copies > 0:
@@ -51,9 +74,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.LBCopies.setText("err")
             self.LBCopies.setStyleSheet("color: red")
             self.LBSheet.setStyleSheet("color: red")
+            self.LBUtil.setText(str(0))
 
     def __resize_canvas(self) -> None:
-        self.__canvas.resize(self.SPCanvasX.value(), self.SPCanvasY.value())
+        scene, cv_width, cv_height = self.__canvas.resize(self.SPCanvasX.value(), self.SPCanvasY.value())
+        self.GVCanvas.setScene(scene)
+        self.__cv_width = cv_width
+        self.__cv_height = cv_height
         self.__reload()
 
 
