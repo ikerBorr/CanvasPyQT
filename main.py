@@ -2,7 +2,6 @@ import sys
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QFont
 
 from view.v_MainWindow import Ui_MainWindow
 from controller.c_canvas import CCanvas
@@ -19,7 +18,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.__canvas = CCanvas()
         self.__copies = 0
-        self.__sheet_size = [420, 297]
+        self.__sheet_size = [const.MAX_WIDTH, const.MAX_HEIGHT]
 
         scene_max_w = const.MAX_WIDTH + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
         scene_max_h = const.MAX_HEIGHT + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
@@ -49,12 +48,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         scene.clear()
         scene, self.__copies = self.__canvas.generate_print(scene, copy, self.__sheet_size, offset, gap)
         self.__calculate_copies()
-        if self.__copies > 0:
-            self.GVCanvas.setScene(scene)
-        else:
-            scene.clear()
-            scene.addSimpleText("ERROR TAMAÑO INCORRECTO", QFont("Times", 22))
-            self.GVCanvas.setScene(scene)
 
     def __calculate_copies(self):
         if self.__copies > 0:

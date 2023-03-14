@@ -51,8 +51,12 @@ class CCanvas:
         return copy[0], copy[1], nw1, nh1
 
     @staticmethod
-    def create_scene() -> QGraphicsScene:
-        return QGraphicsScene(0, 0, const.SCENE_MAX_WIDTH, const.SCENE_MAX_HEIGHT)
+    def create_scene(w: int = const.SCENE_MAX_WIDTH, h: int = const.SCENE_MAX_HEIGHT) -> QGraphicsScene:
+        return QGraphicsScene(0, 0, w, h)
+
+    @staticmethod
+    def err(scene: QGraphicsScene):
+        scene.addSimpleText(const.ERROR_MSG, const.ERROR_FONT)
 
     def cm_to_px(self, x: float) -> float:
         ret = int(x * self.__constSize)
@@ -85,32 +89,37 @@ class CCanvas:
 
         assert(len(copy) == 2 and len(sheet) == 2)
 
-        self.__print_rect(scene, [0, 0], [math.ceil(sheet[0]), math.ceil(sheet[1])], QBrush(Qt.GlobalColor.white))
-
         gap, offset = self.cm_to_px(gap), int(self.cm_to_px(offset))
         copy = [self.cm_to_px(copy[0]), self.cm_to_px(copy[1])]
         width, height, n_vert, n_hort = self.__optimise_place(sheet, copy, int(gap), offset)
 
-        offset_v = int((sheet[0] - int(width * n_vert + gap * (n_vert - 1))) / 2)
-        offset_h = int((sheet[1] - int(height * n_hort + gap * (n_hort - 1))) / 2)
+        if (n_vert * n_hort) > 0:
 
-        org_x = int(offset_v + width + gap / 2)
-        end_x = int(sheet[0]) - offset_v
-        orgy = int(offset_h + height + gap / 2)
-        end_y = int(sheet[1]) - offset_h
+            self.__print_rect(scene, [0, 0], [math.ceil(sheet[0]), math.ceil(sheet[1])], QBrush(Qt.GlobalColor.white))
 
-        self.__print_rect(scene, [offset_v, offset_h], [end_x - offset_v, end_y - offset_h])
+            offset_v = int((sheet[0] - int(width * n_vert + gap * (n_vert - 1))) / 2)
+            offset_h = int((sheet[1] - int(height * n_hort + gap * (n_hort - 1))) / 2)
 
-        self.__print_line(scene, [offset_v, offset_h], [offset_v, end_y], 2)
-        for i in range(n_vert - 1):
-            self.__print_line(scene, [org_x, int(offset_h + gap / 2)], [org_x, int(end_y - gap / 2)], gap)
-            org_x = org_x + width + gap
-        self.__print_line(scene, [end_x, offset_h], [end_x, end_y], 2)
+            org_x = int(offset_v + width + gap / 2)
+            end_x = int(sheet[0]) - offset_v
+            orgy = int(offset_h + height + gap / 2)
+            end_y = int(sheet[1]) - offset_h
 
-        self.__print_line(scene, [offset_v, offset_h], [end_x, offset_h], 2)
-        for i in range(n_hort - 1):
-            self.__print_line(scene, [int(offset_v + gap / 2), orgy], [int(end_x - gap / 2), orgy], gap)
-            orgy = orgy + height + gap
-        self.__print_line(scene, [offset_v, end_y], [end_x, end_y], 2)
+            self.__print_rect(scene, [offset_v, offset_h], [end_x - offset_v, end_y - offset_h])
+
+            self.__print_line(scene, [offset_v, offset_h], [offset_v, end_y], 2)
+            for i in range(n_vert - 1):
+                self.__print_line(scene, [org_x, int(offset_h + gap / 2)], [org_x, int(end_y - gap / 2)], gap)
+                org_x = org_x + width + gap
+            self.__print_line(scene, [end_x, offset_h], [end_x, end_y], 2)
+
+            self.__print_line(scene, [offset_v, offset_h], [end_x, offset_h], 2)
+            for i in range(n_hort - 1):
+                self.__print_line(scene, [int(offset_v + gap / 2), orgy], [int(end_x - gap / 2), orgy], gap)
+                orgy = orgy + height + gap
+            self.__print_line(scene, [offset_v, end_y], [end_x, end_y], 2)
+
+        else:
+            CCanvas.err(scene)
 
         return scene, n_vert * n_hort
