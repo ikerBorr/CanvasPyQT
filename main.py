@@ -1,6 +1,6 @@
 import sys
 
-from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene
+from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QFont
 
@@ -19,8 +19,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.__canvas = CCanvas()
         self.__copies = 0
-        self.__cv_width = 420
-        self.__cv_height = 297
+        self.__sheet_size = [420, 297]
 
         scene_max_w = const.MAX_WIDTH + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
         scene_max_h = const.MAX_HEIGHT + 2 * const.GEOMETRY_BORDER + const.CANVAS_OFFSET
@@ -43,13 +42,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.SPNCopies.valueChanged.connect(self.__calculate_copies)
 
     def __reload(self) -> None:
-        cp_width, cp_height = self.SPCopyX.value(), self.SPCopyY.value()
+        copy = [self.SPCopyX.value(), self.SPCopyY.value()]
         offset, gap = self.SPOffset.value(), self.SPGap.value()
 
         scene = self.GVCanvas.scene()
         scene.clear()
-        scene, self.__copies = self.__canvas.generate_print(scene, cp_width, cp_height, self.__cv_width, 
-                                                            self.__cv_height, offset, gap)
+        scene, self.__copies = self.__canvas.generate_print(scene, copy, self.__sheet_size, offset, gap)
         self.__calculate_copies()
         if self.__copies > 0:
             self.GVCanvas.setScene(scene)
@@ -79,8 +77,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __resize_canvas(self) -> None:
         scene, cv_width, cv_height = self.__canvas.resize(self.SPCanvasX.value(), self.SPCanvasY.value())
         self.GVCanvas.setScene(scene)
-        self.__cv_width = cv_width
-        self.__cv_height = cv_height
+        self.__sheet_size = [cv_width, cv_height]
         self.__reload()
 
 

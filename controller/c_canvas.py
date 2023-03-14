@@ -20,35 +20,38 @@ class CCanvas:
         self.__penLine = QPen(Qt.GlobalColor.white)
         self.__penLine.setWidth(1)
 
-    def __print_line(self, scene: QGraphicsScene, x1: int, y1: int, x2: int, y2: int, gap: float = 1) -> None:
+    def __print_line(self, scene: QGraphicsScene, p1: list, p2: list, gap: float = 1) -> None:
+
+        assert(len(p1) == 2 and len(p2) == 2)
 
         self.__penLine.setWidth(int(gap))
-        line = QLineF(x1 + const.LINE_ORG, y1 + const.LINE_ORG, x2 + const.LINE_ORG, y2 + const.LINE_ORG)
+        line = QLineF(p1[0] + const.LINE_ORG, p1[1] + const.LINE_ORG, p2[0] + const.LINE_ORG, p2[1] + const.LINE_ORG)
         scene.addLine(line, self.__penLine)
 
-    def __print_rect(self, scene: QGraphicsScene, x1: int, y1: int, x2: int, y2: int,
-                     brush: QBrush = None, pen: QPen = None) -> None:
+    def __print_rect(self, scene: QGraphicsScene, p1: list, p2: list, brush: QBrush = None, pen: QPen = None) -> None:
 
-        rect = QRectF(x1 + const.RECT_ORG, y1 + const.RECT_ORG, x2, y2)
+        rect = QRectF(p1[0] + const.RECT_ORG, p1[1] + const.RECT_ORG, p2[0], p2[1])
         scene.addRect(rect, pen or self.__penGeometry, brush or self.__brushGeometry)
 
     @staticmethod
-    def __optimise_place(cv_w: float, cv_h: float, w: float, h: float, gap: int = 1,
-                         offset: int = 1) -> [int, int, int, int]:
+    def __optimise_place(sheet: list, copy: list, gap: int = 1, offset: int = 1) -> (int, int, int, int):
+
+        assert(len(sheet) == 2 and len(copy) == 2)
 
         aux = gap - 2 * offset
-        nw1 = int((cv_w + aux) / (w + gap))
-        nh1 = int((cv_h + aux) / (h + gap))
-        nw2 = int((cv_h + aux) / (w + gap))
-        nh2 = int((cv_w + aux) / (h + gap))
+        nw1 = int((sheet[0] + aux) / (copy[0] + gap))
+        nh1 = int((sheet[1] + aux) / (copy[1] + gap))
+        nw2 = int((sheet[1] + aux) / (copy[0] + gap))
+        nh2 = int((sheet[0] + aux) / (copy[1] + gap))
 
-        if (nw1 * nh1) > (nw2 * nh2):
-            return w, h, nw1, nh1
-        else:
-            return h, w, nh2, nw2
+        if (nw1 * nh1) < (nw2 * nh2):
+            copy = copy[1], copy[0]
+            nw1, nh1 = nh2, nw2
+
+        return copy[0], copy[1], nw1, nh1
 
     @staticmethod
-    def create_scene():
+    def create_scene() -> QGraphicsScene:
         return QGraphicsScene(0, 0, const.SCENE_MAX_WIDTH, const.SCENE_MAX_HEIGHT)
 
     def cm_to_px(self, x: float) -> float:
@@ -78,36 +81,36 @@ class CCanvas:
 
         return scene, width, height
 
-    def generate_print(self, scene: QGraphicsScene, cp_width: float, cp_height: float, cv_width: float,
-                       cv_height: float, offset: float, gap: float) -> [QGraphicsScene, int]:
+    def generate_print(self, scene: QGraphicsScene, copy: list, sheet: list, offset: float, gap: float) -> tuple:
 
-        gap, offset = self.cm_to_px(gap), self.cm_to_px(offset)
+        assert(len(copy) == 2 and len(sheet) == 2)
 
-        self.__print_rect(scene, 0, 0, math.ceil(cv_width), math.ceil(cv_height), QBrush(Qt.GlobalColor.white))
+        self.__print_rect(scene, [0, 0], [math.ceil(sheet[0]), math.ceil(sheet[1])], QBrush(Qt.GlobalColor.white))
 
-        width, height, n_vert, n_hort = self.__optimise_place(cv_width, cv_height, self.cm_to_px(cp_width),
-                                                              self.cm_to_px(cp_height), int(gap), int(offset))
+        gap, offset = self.cm_to_px(gap), int(self.cm_to_px(offset))
+        copy = [self.cm_to_px(copy[0]), self.cm_to_px(copy[1])]
+        width, height, n_vert, n_hort = self.__optimise_place(sheet, copy, int(gap), offset)
 
-        offset_v = int((cv_width - int(width * n_vert + gap * (n_vert - 1))) / 2)
-        offset_h = int((cv_height - int(height * n_hort + gap * (n_hort - 1))) / 2)
+        offset_v = int((sheet[0] - int(width * n_vert + gap * (n_vert - 1))) / 2)
+        offset_h = int((sheet[1] - int(height * n_hort + gap * (n_hort - 1))) / 2)
 
         org_x = int(offset_v + width + gap / 2)
-        end_x = int(cv_width) - offset_v
+        end_x = int(sheet[0]) - offset_v
         orgy = int(offset_h + height + gap / 2)
-        end_y = int(cv_height) - offset_h
+        end_y = int(sheet[1]) - offset_h
 
-        self.__print_rect(scene, offset_v, offset_h, end_x - offset_v, end_y - offset_h)
+        self.__print_rect(scene, [offset_v, offset_h], [end_x - offset_v, end_y - offset_h])
 
-        self.__print_line(scene, offset_v, offset_h, offset_v, end_y, 2)
+        self.__print_line(scene, [offset_v, offset_h], [offset_v, end_y], 2)
         for i in range(n_vert - 1):
-            self.__print_line(scene, org_x, int(offset_h + gap / 2), org_x, int(end_y - gap / 2), gap)
+            self.__print_line(scene, [org_x, int(offset_h + gap / 2)], [org_x, int(end_y - gap / 2)], gap)
             org_x = org_x + width + gap
-        self.__print_line(scene, end_x, offset_h, end_x, end_y, 2)
+        self.__print_line(scene, [end_x, offset_h], [end_x, end_y], 2)
 
-        self.__print_line(scene, offset_v, offset_h, end_x, offset_h, 2)
+        self.__print_line(scene, [offset_v, offset_h], [end_x, offset_h], 2)
         for i in range(n_hort - 1):
-            self.__print_line(scene, int(offset_v + gap / 2), orgy, int(end_x - gap / 2), orgy, gap)
+            self.__print_line(scene, [int(offset_v + gap / 2), orgy], [int(end_x - gap / 2), orgy], gap)
             orgy = orgy + height + gap
-        self.__print_line(scene, offset_v, end_y, end_x, end_y, 2)
+        self.__print_line(scene, [offset_v, end_y], [end_x, end_y], 2)
 
         return scene, n_vert * n_hort
