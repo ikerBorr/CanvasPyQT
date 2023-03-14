@@ -34,7 +34,7 @@ class CCanvas:
         scene.addRect(rect, pen or self.__penGeometry, brush or self.__brushGeometry)
 
     @staticmethod
-    def __optimise_place(sheet: list, copy: list, gap: int = 1, offset: int = 1) -> (int, int, int, int):
+    def __optimise_place(sheet: list, copy: list, gap: float, offset: float) -> (int, int, int, int):
 
         assert(len(sheet) == 2 and len(copy) == 2)
 
@@ -59,7 +59,7 @@ class CCanvas:
         scene.addSimpleText(const.ERROR_MSG, const.ERROR_FONT)
 
     def cm_to_px(self, x: float) -> float:
-        ret = int(x * self.__constSize)
+        ret = x * self.__constSize
         if ret == 0:
             return 1
         else:
@@ -89,13 +89,14 @@ class CCanvas:
 
         assert(len(copy) == 2 and len(sheet) == 2)
 
-        gap, offset = self.cm_to_px(gap), int(self.cm_to_px(offset))
+        gap, offset = self.cm_to_px(gap), self.cm_to_px(offset)
         copy = [self.cm_to_px(copy[0]), self.cm_to_px(copy[1])]
-        width, height, n_vert, n_hort = self.__optimise_place(sheet, copy, int(gap), offset)
+        width, height, n_vert, n_hort = self.__optimise_place(sheet, copy, gap, offset)
 
         if (n_vert * n_hort) > 0:
 
             self.__print_rect(scene, [0, 0], [math.ceil(sheet[0]), math.ceil(sheet[1])], QBrush(Qt.GlobalColor.white))
+            gap, offset = math.ceil(gap), math.ceil(offset)
 
             offset_v = int((sheet[0] - int(width * n_vert + gap * (n_vert - 1))) / 2)
             offset_h = int((sheet[1] - int(height * n_hort + gap * (n_hort - 1))) / 2)
